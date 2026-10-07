@@ -588,11 +588,16 @@
   }
   .nav-tabs {
     display: flex;
+    justify-content: center;
     max-width: 1200px;
     margin: 0 auto;
     padding: 0 16px;
-    gap: 4px;
+    gap: 6px;
+    overflow-x: auto;              /* em telas estreitas, rola em vez de quebrar */
+    scrollbar-width: none;
   }
+  .nav-tabs::-webkit-scrollbar { display: none; }
+  @media (max-width: 860px) { .nav-tabs { justify-content: flex-start; } }
   .nav-tab {
     display: flex;
     align-items: center;
@@ -605,14 +610,19 @@
     background: transparent;
     border: none;
     border-bottom: 2px solid transparent;
+    margin-bottom: -1px;           /* sublinhado assenta sobre a borda da barra */
     cursor: pointer;
-    transition: all .18s;
+    transition: color .18s, border-color .18s;
     white-space: nowrap;
   }
+  /* sem o contorno azul do navegador ao clicar; mantém um foco visível no teclado */
+  .nav-tab:focus { outline: none; }
+  .nav-tab:focus-visible { outline: 2px solid var(--accent); outline-offset: -4px; border-radius: 6px; }
   .nav-tab:hover { color: var(--green-200); }
   .nav-tab.active {
-    color: var(--green-300);
-    border-bottom-color: var(--green-400);
+    color: var(--accent);
+    font-weight: 600;
+    border-bottom-color: var(--accent);
   }
   @media(max-width:480px) {
     .nav-tab { padding: 12px 10px; font-size: 12px; gap: 5px; }
