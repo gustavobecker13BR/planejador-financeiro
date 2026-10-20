@@ -3627,18 +3627,18 @@ function renderNovaAlocacao(){
   // Usar `valor` nos dois lados faz o custo de saída penalizar a troca corretamente.
   const retA = valor > 0 ? (rA.liq / valor - 1) * 100 : 0;
   const retN = valor > 0 ? (rN.liq / valor - 1) * 100 : 0;
-  // Destaque: quanto o líquido da nova alocação supera o líquido da posição atual
-  const ganhoPct = rA.liq > 0 ? (rN.liq / rA.liq - 1) * 100 : 0;
+  // Destaque: diferença de retorno acumulado, em pontos percentuais
+  // (mesmo número da linha "Retorno acumulado no período" do comparativo)
+  const ganhoPct = retN - retA;
 
   // Destaque
   const head = document.getElementById('na-headline');
   head.classList.toggle('negativo', ganho < 0);
   document.getElementById('na-ganho').textContent = (ganho >= 0 ? '+' : '') + gpFmt(ganho);
   const num = v => v.toFixed(2).replace('.', ',');
-  // ganhoPct = retN − retA, que equivale a ganho ÷ valor da operação
   const periodo = `em ${anos} ${anos===1?'ano':'anos'}`;
   document.getElementById('na-ganho-sub').textContent =
-    `${ganhoPct>=0?'+':''}${num(ganhoPct)}% a mais que a posição atual · ${periodo}` +
+    `${ganhoPct>=0?'+':''}${num(ganhoPct)} p.p. de retorno acumulado · ${periodo}` +
     (ganho < 0 ? ' — a troca não compensa' : '');
 
   // Resumo dos custos de saída
@@ -3668,9 +3668,9 @@ function renderNovaAlocacao(){
     <tr><td>Tributação</td><td>${isA ? 'Isento' : 'Tabela regressiva'}</td><td>${isN ? 'Isento' : 'Tabela regressiva'}</td><td>—</td></tr>
     <tr><td>Custo de saída (IR + deságio)</td><td>—</td><td class="${custoTotal>0?'na-neg':''}">${custoTotal>0?'−'+gpFmt(custoTotal):'—'}</td><td>${custoTotal>0?'<span class="na-neg">−'+gpFmt(custoTotal)+'</span>':'—'}</td></tr>
     <tr><td>Valor aplicado</td><td>${gpFmt(principalA)}</td><td>${gpFmt(principalN)}</td>${dif(principalA, principalN)}</tr>
-    <tr><td>Valor bruto projetado</td><td>${gpFmt(rA.bruto)}</td><td>${gpFmt(rN.bruto)}</td>${dif(rA.bruto, rN.bruto)}</tr>
+    <tr><td>Valor bruto projetado</td><td>${gpFmt(rA.bruto)}</td><td>${gpFmt(rN.bruto)}</td><td class="${(rN.bruto-rA.bruto)>0.005?'na-pos':(rN.bruto-rA.bruto)<-0.005?'na-neg':''}">${(rN.bruto-rA.bruto)>=0?'+':''}${gpFmt(rN.bruto-rA.bruto)} <span style="font-weight:500;opacity:.85">(${(rN.bruto-rA.bruto)>=0?'+':''}${num(rA.bruto>0?(rN.bruto/rA.bruto-1)*100:0)}%)</span></td></tr>
     <tr><td>IR estimado</td><td>${gpFmt(rA.ir)}</td><td>${gpFmt(rN.ir)}</td>${dif(rA.ir, rN.ir)}</tr>
-    <tr class="na-destaque"><td>Valor líquido projetado</td><td>${gpFmt(rA.liq)}</td><td>${gpFmt(rN.liq)}</td>${dif(rA.liq, rN.liq)}</tr>
+    <tr class="na-destaque"><td>Valor líquido projetado</td><td>${gpFmt(rA.liq)}</td><td>${gpFmt(rN.liq)}</td><td class="${ganho>0.005?'na-pos':ganho<-0.005?'na-neg':''}">${ganho>=0?'+':''}${gpFmt(ganho)} <span style="font-weight:500;opacity:.85">(${ganho>=0?'+':''}${num(rA.liq>0?(rN.liq/rA.liq-1)*100:0)}%)</span></td></tr>
     <tr><td>Retorno acumulado no período</td><td>${num(retA)}%</td><td>${num(retN)}%</td>
         <td class="${(retN-retA)>0.005?'na-pos':(retN-retA)<-0.005?'na-neg':''}">${(retN-retA)>=0?'+':''}${num(retN-retA)} p.p.</td></tr>`;
 
